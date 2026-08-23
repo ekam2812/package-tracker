@@ -14,14 +14,14 @@ def home(request: Request):
     return templates.TemplateResponse(request, "index.html")
 
 @app.post("/intake")
-def intake(tracking_number: str = Form(...)):
+def intake(tracking_number: str = Form(...), recipient_name: str = Form(...)):
     date_logged = datetime.now().strftime("%Y-%m-%d %H-%M-%S")
 
     connection = sqlite3.connect("packages.db")
     cursor = connection.cursor()
     cursor.execute(
-        "INSERT INTO packages (tracking_number, date_logged, status) VALUES (?, ?, ?)", 
-        (tracking_number, date_logged, "pending")
+        "INSERT INTO packages (tracking_number, recipient_name, date_logged, status) VALUES (?, ?, ?, ?)", 
+        (tracking_number, recipient_name, date_logged, "pending")
     )
     connection.commit()
 
