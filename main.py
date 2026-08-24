@@ -24,5 +24,18 @@ def intake(tracking_number: str = Form(...), recipient_name: str = Form(...)):
         (tracking_number, recipient_name, date_logged, "pending")
     )
     connection.commit()
-
     return {"tracking number": tracking_number}
+
+@app.get("/lookup")
+def lookup(tracking_number: str):
+    connection = sqlite3.connect("packages.db")
+    cursor = connection.cursor()
+    cursor.execute("SELECT * FROM packages WHERE tracking_number = ?", 
+                    (tracking_number,)
+    )
+    result = cursor.fetchone()
+
+    if result:
+        return {"ID": result[0], "Recipient Name" : result[2]}
+    else:
+        return "Tracking number not found"
