@@ -39,3 +39,14 @@ def lookup(tracking_number: str):
         return {"ID": result[0], "Recipient Name" : result[2]}
     else:
         return "Tracking number not found"
+
+@app.post("/pickup")
+def pickup(tracking_number: str = Form(...)):
+    date_picked_up = datetime.now().strftime("%Y-%m-%d %H-%M-%S")
+    connection = sqlite3.connect("packages.db")
+    cursor = connection.cursor()
+    cursor.execute("UPDATE packages SET status = ?, date_picked_up = ? WHERE tracking_number = ?", 
+                   ("picked up", date_picked_up, tracking_number,)
+    )
+    connection.commit()
+    return {"tracking number:" : tracking_number, "picked up": "has been picked up"}
