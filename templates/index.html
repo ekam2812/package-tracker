@@ -8,11 +8,55 @@
 <body>
     <h1>This is HTML!!</h1>
 
-    <form action = "/intake" method="POST">
-        <input type= "text" name="tracking_number">
-        <input type="text" name="recipient_name">
+    <form id="intake-form" action = "/intake" method="POST">
+        <input id="recipient_name" type="text" name="recipient_name" placeholder="Name">
+        <input id="package_type" type="text" name="package_type" placeholder="Package Type">
+        <input id="tracking_number" type= "text" name="tracking_number" placeholder="Tracking Number">
         <button type="submit">Submit</button>
+
+        <table id="intake-log">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Recipient Name</th>
+                    <th>Package Type</th>
+                    <th>Tracking Number</th>
+                </tr>
+            </thead>
+            <tbody id="intake-log-body">
+            </tbody>
+        </table>
+
     </form>
 
+    <script>
+        document.getElementById("intake-form").addEventListener("submit", async function(event) {
+            event.preventDefault()
+
+            const formData = new FormData(document.getElementById("intake-form"));
+            const response = await fetch("/intake", {method: "POST", body: formData})
+            const data = await response.json();
+
+            const row = document.createElement("tr");
+
+            const idCell = document.createElement("td");
+            idCell.textContent = data.package_id;
+
+            const nameCell = document.createElement("td");
+            nameCell.textContent = data.recipient_name
+        
+            const boxTypeCell = document.createElement("td");
+            boxTypeCell.textContent = data.package_type;
+        
+            const trackingNumberCell = document.createElement("td");
+            trackingNumberCell.textContent = data.tracking_number;
+           
+            row.append(idCell, nameCell, boxTypeCell, trackingNumberCell);
+            document.getElementById("intake-log-body").append(row);
+
+
+            console.log(data);
+        });
+    </script>
 </body>
 </html>
